@@ -24,19 +24,19 @@ import sys
 import torch.optim as optim
 from torch.optim.lr_scheduler import LambdaLR
 from torch.utils.data.dataloader import DataLoader
-import babyai.utils as utils
+# import babyai.utils as utils
 
 logger = logging.getLogger(__name__)
 
 from mingpt.utils import bert_sample_multi_step, dt_sample, AGENT_ID, AGENT_COLOR
-import atari_py
-from collections import deque
-import random
-import cv2
-import torch
-from PIL import Image
+# import atari_py
+#from collections import deque
+#import random
+#import cv2
+#import torch
+#from PIL import Image
 import logging
-from babyai.utils.agent import BotAgent
+# from babyai.utils.agent import BotAgent
 
 class TrainerConfig:
     # optimization parameters
@@ -71,7 +71,7 @@ class Trainer:
         self.sample_iteration = sample_iteration
         self.inst_preprocessor = inst_preprocessor
         self.env_size = env_size
-        self.bot_advisor_agent = BotAgent(self.env)
+        # self.bot_advisor_agent = BotAgent(self.env)
         # take over whatever gpus are on the system
         self.device = 'cpu'
         if torch.cuda.is_available():

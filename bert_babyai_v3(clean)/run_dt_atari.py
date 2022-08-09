@@ -22,7 +22,7 @@ import pdb
 import copy
 import argparse
 #from create_dataset import create_dataset
-import babyai.utils as utils
+# import babyai.utils as utils
 from instruction_process import InstructionsPreprocessor
 
 parser = argparse.ArgumentParser()
@@ -39,9 +39,14 @@ parser.add_argument('--horizon', type=int, default=1)
 parser.add_argument('--env', type=str, default='BabyAI-PickupLoc-v0') #'BabyAI-Unlock-v0' #'BabyAI-GoToObj-v0'
 #'/home/hchen657/Downloads/BabyAI-Unlock-v0.pkl' PickupLoc
 #'/home/hchen657/Downloads/BabyAI-GoToObj-v0.pkl'
-parser.add_argument('--bert_dataset_path', type=str, default="/home/hchen657/decision-transformer/babyai/demos/BabyAI-PickupLoc-v0_agent_all_new.pkl")#_all_new #_all_new_half #_all_new_fifth
-parser.add_argument('--dt_dataset_path', type=str, default="/home/hchen657/decision-transformer/babyai/demos/BabyAI-PickupLoc-v0.pkl")#_all_new #_all_new_half #_all_new_fifthparser.add_argument('--trajectories_per_buffer', type=int, default=10, help='Number of trajectories to sample from each of the buffers.')
+parser.add_argument('--bert_dataset_path', type=str, default="./data/BabyAI-PickupLoc-v0_agent1.pkl")#_all_new #_all_new_half #_all_new_fifth
 parser.add_argument('--data_dir_prefix', type=str, default='./dqn_replay/')
+
+parser.add_argument('--debug_mode', type=int, default=-1, 
+                    help="If -1, no debug. "
+                    "If 0, will only use 5 traj w/ random init state sample."
+                    "If 1, will only use 5 traj w/0 random init state sample."
+                )
 args = parser.parse_args()
 
 set_seed(args.seed)
@@ -56,15 +61,22 @@ def discount_cumsum(x, gamma):
 
 class BERTDataset(Dataset):
 
-    def __init__(self, block_size, dataset_path, env, rate, plan_horizon):        
+    def __init__(self, block_size, dataset_path, env, rate, plan_horizon, args):        
         self.block_size = block_size
         self.inst_preprocessor = InstructionsPreprocessor()
         with open(dataset_path, 'rb') as f:
             self.trajs = pickle.load(f)
 
+        # store args
+        self.args = args
+
+        # debug mode
+        if self.args.debug_mode >= 0:
+            self.trajs = self.trajs[:5]
+
         self.insts = []
-        self.all_delta_states = []
-        self.all_proc_states = []
+        self.all_delta_states = []          # Coordinate change. No length limit
+        self.all_proc_states = []           # Coordinate sequence. NO End location.
         self.all_proc_images = []
         self.max_inst_len = 0
         self.vocab_size = len(tokens)
@@ -89,8 +101,13 @@ class BERTDataset(Dataset):
         self.full_obs_shape = blosc.unpack_array(self.trajs[0][1])[0].shape[0]
         self.state_dim = 5 #len(self.trajs[0][2][0])
 
+
     def __len__(self):
-        return len(self.all_delta_states)
+        if self.args.debug:
+            return 5
+        else:
+            return len(self.all_delta_states)
+        # return 4
 
     def get_init_states(self, states):
         return np.copy(states[0])
@@ -130,14 +147,18 @@ class BERTDataset(Dataset):
         instruction = np.concatenate([np.zeros(self.max_inst_len - len(instruction)), instruction])
         instruction = torch.from_numpy(instruction).to(dtype=torch.long)
 
-        si = random.randint(0, len(self.all_proc_states[idx])-1)
+        if self.args.debug_mode == 1:
+            si = 0  # No initial state sampling
+        else:
+            si = random.randint(0, len(self.all_proc_states[idx])-1)
         states = np.array(self.all_proc_states[idx][si:si + block_size])
         states = states.reshape(len(states), -1)
         actions = np.array(self.all_delta_states[idx][si:si + block_size])
         actions = actions.reshape(len(actions), -1)
 
         rtgs = np.array([0.]*block_size)
-        rtgs[-1] = 1 - 0.9*(len(self.all_proc_states[idx])/float(self.env.max_steps))
+        # rtgs[-1] = 1 - 0.9*(len(self.all_proc_states[idx])/float(self.env.max_steps))
+        rtgs[-1] = 1 - 0.9*(len(self.all_proc_states[idx])/float(1024))
         rtgs = discount_cumsum(rtgs, gamma=1.0).reshape(-1,1)
 
         full_image = np.array(self.all_proc_images[idx][si:si + block_size])
@@ -177,13 +198,19 @@ logging.basicConfig(
         level=logging.INFO,
 )
 
-env = gym.make(args.env)
+# env = gym.make(args.env)
+env = None
+
 rate = 3 if args.model_type == 'reward_conditioned' else 2
 max_timesteps = 1024
 sample_iteration = 300 # * args.horizon
 plan_horizon = args.horizon
 
-bert_train_dataset = BERTDataset(args.context_length*rate, args.bert_dataset_path, env, rate, plan_horizon)
+bert_train_dataset = BERTDataset(args.context_length*rate, args.bert_dataset_path, env, rate, plan_horizon, args=args)
+# print(bert_train_dataset.trajs[0])
+# print(len(bert_train_dataset[0]))
+#for i in range(len(bert_train_dataset)):
+#    print(bert_train_dataset[i])
 
 mconf = GPTConfig(bert_train_dataset.vocab_size, bert_train_dataset.block_size,
                   n_layer=6, n_head=8, n_embd=128, model_type=args.model_type, max_timestep=max_timesteps, env_size=bert_train_dataset.full_obs_shape, state_dim=bert_train_dataset.state_dim)

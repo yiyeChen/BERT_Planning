@@ -463,6 +463,7 @@ class BERT_GPT(nn.Module):
         return train_sample_actions, action_logits, is_better_than_first, is_better_than_all, energys[-1], free_rate.item(), action_correct_rate.item(), action_correct_rate_steps
 
     def compute_energy(self, target_actions, sample_actions, action_logits, action_masks, use_sum=False, neg_energy=False):
+        """This is the loss function for now."""
         action_size = action_logits.shape[2]
         action_logits = action_logits.masked_select(action_masks).reshape(-1, action_size)
         action_logits = F.softmax(action_logits, dim=-1)
@@ -558,9 +559,12 @@ class BERT_GPT(nn.Module):
             timesteps=None, insts=None, init_states=None, init_obss=None,\
             mode='train', is_debug=False, logger=None):
 
-        sample_actions, train_action_logits, is_better_than_first, is_better_than_all, mcmc_energy, free_rate, correct_action_rate, action_correct_rate_steps = self.mcmc_construct_trajectory(init_states, init_obss, timesteps, insts, target_actions=target_actions, target_action_masks=action_masks)
-        
+        sample_actions, train_action_logits, is_better_than_first, is_better_than_all, mcmc_energy, free_rate, correct_action_rate, action_correct_rate_steps = \
+            self.mcmc_construct_trajectory(init_states, init_obss, timesteps, insts, target_actions=target_actions, target_action_masks=action_masks)
+
+        # is loss 
         energy = self.compute_energy(target_actions, sample_actions, train_action_logits, action_masks, neg_energy=True)
+
         #if (is_debug):
         gt_traj_energy = self.gt_trajectory_energy(target_states, target_imgs, timesteps, insts, target_actions=target_actions, target_action_masks=action_masks)
 

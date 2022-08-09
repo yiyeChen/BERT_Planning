@@ -1,0 +1,13 @@
+# cache
+*__pycache__*
+.vscode
+.swap
+
+# log
+log_file*
+
+# data
+data/
+
+# Yiye doodle
+CodeNote.md
