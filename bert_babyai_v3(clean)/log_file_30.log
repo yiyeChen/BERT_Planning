@@ -1,0 +1,58 @@
+Test it 0, epoch_num 0, losses 6.231764793395996
+Test it 0, epoch_num 0, losses 6.231764793395996
+Test it 0, epoch_num 0, losses 6.231764793395996
+Test it 0, epoch_num 0, losses 6.231764793395996
+Test it 0, epoch_num 0, losses 6.231764793395996
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+('sampled state: ', tensor([[[15,  4,  3, 10, 14],
+         [16, 18,  1, 10, 14],
+         [10, 10,  1, 10, 14],
+         [ 4, 17,  3, 10, 14],
+         [11,  4,  2, 10, 14],
+         [15,  7,  2, 10, 14],
+         [15, 19,  1, 10, 14],
+         [13,  3,  2, 10, 14],
+         [16, 16,  1, 10, 14],
+         [13, 12,  3, 10, 14],
+         [10,  4,  1, 10, 14],
+         [13, 12,  0, 10, 14],
+         [15, 17,  0, 10, 14],
+         [13,  3,  1, 10, 14],
+         [16, 19,  1, 10, 14],
+         [12, 10,  2, 10, 14],
+         [10, 19,  2, 10, 14],
+         [13, 17,  0, 10, 14],
+         [11,  4,  3, 10, 14],
+         [ 9, 16,  3, 10, 14],
+         [15, 17,  3, 10, 14],
+         [15, 12,  2, 10, 14],
+         [16, 19,  2, 10, 14],
+         [13,  3,  1, 10, 14],
+         [15, 13,  0, 10, 14],
+         [ 4, 17,  2, 10, 14],
+         [15, 10,  1, 10, 14],
+         [15, 17,  1, 10, 14],
+         [11, 13,  2, 10, 14],
+         [10, 14,  0, 10, 14]]], device='cuda:0'))
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+('key position: ', [4, 11])
+Test it 0, epoch_num 0, losses 6.236135482788086, action loss 1.7626241445541382
+Test it 0, epoch_num 0, losses 5.664579391479492, action loss 1.4021673202514648
